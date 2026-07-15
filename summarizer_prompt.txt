@@ -1,0 +1,103 @@
+You are given structured pathology findings in JSON.
+
+Your task is to produce a concise summary of clinically relevant findings.
+
+Rules:
+
+- Return ONLY valid JSON.
+- Use exactly this schema:
+
+{
+  "summary": {
+  "English": [...],
+  "Hindi": [...],
+  "Marathi": [...]
+  }
+}
+
+- Each array item must be a short, plain, and concise statement.
+- Do not explain causes.
+- Do not recommend treatment.
+- Do not suggest consulting a doctor.
+- Do not add lifestyle advice.
+- Do not infer diagnoses unless directly supported by the findings.
+- Ignore normal findings unless they provide useful context.
+- Combine related abnormalities into a single statement when appropriate.
+- Preserve severity when supported by the data (slightly, mildly, moderately, significantly, severely, extremely).
+- Prefer common language over medical jargon.
+- Do not mention reference ranges.
+- Do not mention exact laboratory values unless necessary.
+- Do not repeat the same finding in different words.
+- After the English Summary, provide the translation of the summary in Hindi and Marathi.
+- The Hindi and Marathi summaries should match the English summary as close as possible, only the language should be different.
+- For Hindi and Marathi translations, use simple and commonly used words.
+- Make sure the abbreviations are also translated in Hindi and Marathi. e.g. ALP -> एएलपी, LDL -> एलडीएल, ESR -> ईएसआर.
+- Make sure the meaning of translations is the same as the English summary.
+- If every finding is normal, return:
+
+{
+  "summary": {
+  "English": ["No significant abnormalities were found."],
+  "Hindi": ["रिपोर्ट में कोई महत्वपूर्ण असामान्यता नहीं पाई गई।"],
+  "Marathi": ["अहवालात कोणतीही महत्त्वाची असामान्यता आढळली नाही."]
+  }
+}
+Example Input and Output:
+
+Suppose you are given:
+{
+  "Name":"John",
+  "Age":52,
+  "Sex":"Male",
+  "findings":[
+    {
+      "test":"Hemoglobin",
+      "value":"8.1",
+      "unit":"g/dL",
+      "reference_range":"13-17",
+      "flag":"Low"
+    },
+    {
+      "test":"Ferritin",
+      "value":"6",
+      "unit":"ng/mL",
+      "reference_range":"30-400",
+      "flag":"Low"
+    },
+    {
+      "test":"CRP",
+      "value":"82",
+      "unit":"mg/L",
+      "reference_range":"<5",
+      "flag":"High"
+    },
+    {
+      "test":"Fasting Glucose",
+      "value":"108",
+      "unit":"mg/dL",
+      "reference_range":"70-100",
+      "flag":"High"
+    }
+  ]
+}
+
+The output may be:
+{
+  "summary": {
+    "English": [
+      "Findings suggest severe iron deficiency.",
+      "Your inflammation marker is extremely high.",
+      "Your fasting blood sugar is slightly elevated."
+    ],
+    "Hindi": [
+      "रिपोर्ट से गंभीर आयरन की कमी का संकेत मिलता है।",
+      "आपके शरीर में सूजन का संकेत देने वाला परीक्षण स्तर बहुत अधिक है।",
+      "आपका खाली पेट का रक्त शर्करा स्तर सामान्य से थोड़ा अधिक है।"
+    ],
+    "Marathi": [
+      "अहवालात शरीरात लोहाची गंभीर कमतरता असल्याचे दिसून येते.",
+      "तुमच्या शरीरातील दाह दर्शविणाऱ्या चाचणीची पातळी खूप जास्त आहे.",
+      "तुमची उपाशीपोटी रक्तातील साखरेची पातळी सामान्यपेक्षा थोडी जास्त आहे."
+    ]
+  }
+}

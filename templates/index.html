@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="pathoGEN — AI-powered medical report analyzer. Upload your pathology report and get instant findings and summaries.">
+    <title>pathoGEN — Medical Report Analyzer</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Top Navbar -->
+<nav class="top-navbar" id="top-navbar">
+    <a href="/" class="navbar-brand">
+        <img src="/static/favicon.png" alt="pathoGEN" class="navbar-icon">
+        pathoGEN
+    </a>
+</nav>
+
+<div class="app-container">
+
+    <!-- Hero Tagline -->
+    <header class="app-header">
+        <h1 class="app-logo">pathoGEN</h1>
+        <p class="app-tagline">AI-Powered Medical Report Analyzer</p>
+    </header>
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="upload-section">
+        <div class="upload-zone" id="upload-zone">
+            <span class="upload-icon">📄</span>
+            <p class="upload-text">Drag & drop your medical report here</p>
+            <p class="upload-hint">Accepts PDF files only</p>
+            <p class="file-name-display" id="file-name-display"></p>
+            <input type="file" class="upload-input" id="file-input" accept=".pdf">
+        </div>
+        <div style="text-align:center;">
+            <button class="upload-btn" id="upload-btn" type="button">
+                <span id="btn-text">Analyze Report</span>
+            </button>
+        </div>
+        <div class="error-message" id="error-message"></div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-findings">
+        <div class="loading-spinner-lg"></div>
+        <p class="loading-text">Reading your report…</p>
+    </div>
+
+    <!-- Patient Info -->
+    <section class="patient-section" id="patient-section">
+        <div class="patient-banner">
+            <div class="patient-item">
+                <div class="patient-icon name-icon">👤</div>
+                <div>
+                    <div class="patient-label">Name</div>
+                    <div class="patient-value" id="patient-name">—</div>
+                </div>
+            </div>
+            <div class="patient-item">
+                <div class="patient-icon age-icon">🎂</div>
+                <div>
+                    <div class="patient-label">Age</div>
+                    <div class="patient-value" id="patient-age">—</div>
+                </div>
+            </div>
+            <div class="patient-item">
+                <div class="patient-icon sex-icon">⚧</div>
+                <div>
+                    <div class="patient-label">Sex</div>
+                    <div class="patient-value" id="patient-sex">—</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Findings Slider -->
+    <section class="findings-section" id="findings-section">
+        <h2 class="section-title">📋 <span class="accent">Findings</span></h2>
+        <div class="slider-wrapper">
+            <button class="slider-arrow left" id="slider-left" aria-label="Scroll left">‹</button>
+            <div class="slider-container" id="slider-container"></div>
+            <button class="slider-arrow right" id="slider-right" aria-label="Scroll right">›</button>
+        </div>
+    </section>
+
+    <!-- Summary Section -->
+    <section class="summary-section" id="summary-section">
+        <div class="summary-header">
+            <h2 class="section-title">🩺 <span class="accent">Summary</span></h2>
+            <div class="summary-controls" id="summary-controls">
+                <div class="lang-buttons" id="lang-buttons">
+                    <button class="lang-btn active" data-lang="en" id="lang-en">English</button>
+                    <button class="lang-btn" data-lang="hi" id="lang-hi">हिंदी</button>
+                    <button class="lang-btn" data-lang="mr" id="lang-mr">मराठी</button>
+                </div>
+                <button class="speak-btn" id="speak-btn" aria-label="Read summary aloud" title="Read aloud">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="summary-loading" id="summary-loading">
+            <div class="mini-spinner"></div>
+            <span class="summary-loading-text">Generating summary…</span>
+        </div>
+        <div class="summary-list" id="summary-list"></div>
+    </section>
+
+</div>
+
+<!-- Footer Disclaimer -->
+<footer class="bottom-disclaimer-bar">
+    <p class="bottom-disclaimer-text">
+        AI-generated summaries may contain errors. This application is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional.
+    </p>
+</footer>
+
+<script>
+(function() {
+    // --- DOM refs ---
+    const uploadZone     = document.getElementById('upload-zone');
+    const fileInput      = document.getElementById('file-input');
+    const fileNameDisp   = document.getElementById('file-name-display');
+    const uploadBtn      = document.getElementById('upload-btn');
+    const btnText        = document.getElementById('btn-text');
+    const errorMsg       = document.getElementById('error-message');
+    const loadingFindings= document.getElementById('loading-findings');
+    const patientSection = document.getElementById('patient-section');
+    const patientName    = document.getElementById('patient-name');
+    const patientAge     = document.getElementById('patient-age');
+    const patientSex     = document.getElementById('patient-sex');
+    const findingsSection= document.getElementById('findings-section');
+    const sliderContainer= document.getElementById('slider-container');
+    const sliderLeft     = document.getElementById('slider-left');
+    const sliderRight    = document.getElementById('slider-right');
+    const summarySection = document.getElementById('summary-section');
+    const summaryLoading = document.getElementById('summary-loading');
+    const summaryList    = document.getElementById('summary-list');
+
+    let selectedFile = null;
+    let summaryAllLangs = null; // { English: [...], Hindi: [...], Marathi: [...] }
+    let currentLang = 'English';
+    const LANG_MAP = { en: 'English', hi: 'Hindi', mr: 'Marathi' };
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const speakBtn = document.getElementById('speak-btn');
+
+    // --- Audio state ---
+    let ttsController = null; // AbortController for fetch
+    let currentAudio  = null; // Audio element
+    let isSpeaking    = false;
+
+    function stopAudio() {
+        if (ttsController) { ttsController.abort(); ttsController = null; }
+        if (currentAudio)  { currentAudio.pause(); currentAudio.src = ''; currentAudio = null; }
+        isSpeaking = false;
+        speakBtn.classList.remove('speaking');
+        speakBtn.disabled = false;
+    }
+
+    // Stop audio on page unload
+    window.addEventListener('beforeunload', stopAudio);
+
+    // --- Upload Zone interactions ---
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('drag-over');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) handleFile(files[0]);
+    });
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+    });
+
+    function handleFile(file) {
+        // Validate PDF
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            showError('Please upload a PDF file only.');
+            return;
+        }
+        selectedFile = file;
+        fileNameDisp.textContent = '✅ ' + file.name;
+        fileNameDisp.classList.add('visible');
+        uploadZone.classList.add('has-file');
+        uploadBtn.classList.add('active');
+        hideError();
+    }
+
+    let analysisComplete = false;
+
+    // --- Upload & Analyze ---
+    uploadBtn.addEventListener('click', async () => {
+        // If analysis is done, reload page
+        if (analysisComplete) {
+            window.location.href = '/';
+            return;
+        }
+        if (!selectedFile) return;
+        // Reset previous results
+        resetResults();
+        // UI: loading state
+        uploadBtn.classList.add('loading');
+        btnText.innerHTML = '<span class="spinner"></span> Analyzing…';
+        loadingFindings.classList.add('visible');
+        hideError();
+
+        try {
+            // 1. Send PDF to /analyze
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            const analyzeRes = await fetch('/analyze', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!analyzeRes.ok) {
+                const errData = await analyzeRes.json();
+                throw new Error(errData.detail || 'Analysis failed.');
+            }
+
+            const data = await analyzeRes.json();
+
+            // Hide loading
+            loadingFindings.classList.remove('visible');
+
+            // Check for ERROR
+            if (data.ERROR) {
+                showError('Report could not be processed: ' + data.ERROR);
+                resetBtn();
+                return;
+            }
+
+            // 2. Display patient info
+            displayPatientInfo(data);
+
+            // 3. Display findings cards
+            displayFindings(data.findings || []);
+
+            // 4. Fetch summary
+            summarySection.classList.add('visible');
+            summaryLoading.classList.add('visible');
+
+            const summaryRes = await fetch('/summarize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ findings_json: JSON.stringify(data) })
+            });
+
+            if (!summaryRes.ok) {
+                const errData = await summaryRes.json();
+                throw new Error(errData.detail || 'Summary failed.');
+            }
+
+            const summaryData = await summaryRes.json();
+            summaryLoading.classList.remove('visible');
+            summaryAllLangs = summaryData.summary || {};
+            displaySummary(summaryAllLangs['English'] || []);
+
+        } catch (err) {
+            loadingFindings.classList.remove('visible');
+            summaryLoading.classList.remove('visible');
+            showError(err.message);
+            resetBtn();
+            return;
+        }
+
+        // Analysis complete — switch button to "Analyze another report"
+        analysisComplete = true;
+        uploadBtn.classList.remove('loading');
+        btnText.textContent = 'Analyze another report';
+        uploadBtn.classList.add('active');
+    });
+
+    // --- Display Functions ---
+
+    function displayPatientInfo(data) {
+        patientName.textContent = data.Name || '—';
+        patientAge.textContent  = data.Age != null ? data.Age : '—';
+        patientSex.textContent  = data.Sex || '—';
+        patientSection.classList.add('visible');
+    }
+
+    function displayFindings(findings) {
+        sliderContainer.innerHTML = '';
+        if (findings.length === 0) return;
+
+        findings.forEach((f) => {
+            const card = document.createElement('div');
+            card.className = 'finding-card';
+            const flag = f.flag && f.flag !== 'null' ? f.flag : null;
+            if (flag) card.setAttribute('data-flag', flag);
+
+            const flagClass = flag ? 'flag-' + flag.toLowerCase().replace('-', '-') : '';
+            const flagHTML = flag
+                ? `<span class="card-flag ${flagClass}">● ${flag}</span>`
+                : '';
+
+            const value = f.value != null && f.value !== 'null' ? f.value : '—';
+            const unit  = f.unit && f.unit !== 'null' ? f.unit : '';
+            const ref   = f.reference_range && f.reference_range !== 'null'
+                          ? `Ref: ${f.reference_range}` : '';
+
+            card.innerHTML = `
+                <div class="card-test-name" title="${f.test || ''}">${f.test || 'Unknown Test'}</div>
+                <div class="card-value-row">
+                    <span class="card-value">${value}</span>
+                    <span class="card-unit">${unit}</span>
+                </div>
+                <div class="card-ref">${ref}</div>
+                ${flagHTML}
+            `;
+
+            sliderContainer.appendChild(card);
+        });
+
+        findingsSection.classList.add('visible');
+    }
+
+    function displaySummary(statements) {
+        summaryList.innerHTML = '';
+        statements.forEach((text, i) => {
+            const line = document.createElement('div');
+            line.className = 'summary-line';
+            line.style.animationDelay = (i * 0.12) + 's';
+            line.innerHTML = `
+                <span class="summary-bullet">●</span>
+                <span class="summary-text">${escapeHTML(text)}</span>
+            `;
+            summaryList.appendChild(line);
+        });
+    }
+
+    // --- Language Toggle ---
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!summaryAllLangs) return;
+            const lang = LANG_MAP[btn.dataset.lang];
+            if (!lang) return;
+            // Stop any playing audio when language changes
+            stopAudio();
+            currentLang = lang;
+            // Update active state
+            langButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // Re-render summary for selected language
+            displaySummary(summaryAllLangs[lang] || []);
+        });
+    });
+
+    // --- Speak Button ---
+    speakBtn.addEventListener('click', async () => {
+        if (isSpeaking || !summaryAllLangs) return;
+        const statements = summaryAllLangs[currentLang];
+        if (!statements || statements.length === 0) return;
+
+        isSpeaking = true;
+        speakBtn.disabled = true;
+        speakBtn.classList.add('speaking');
+
+        ttsController = new AbortController();
+
+        try {
+            const res = await fetch('/tts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ statements: statements, lang: currentLang }),
+                signal: ttsController.signal
+            });
+
+            if (!res.ok) throw new Error('TTS request failed.');
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            currentAudio = new Audio(url);
+
+            currentAudio.addEventListener('ended', () => {
+                URL.revokeObjectURL(url);
+                stopAudio();
+            });
+
+            currentAudio.addEventListener('error', () => {
+                URL.revokeObjectURL(url);
+                stopAudio();
+            });
+
+            await currentAudio.play();
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('TTS error:', err);
+            }
+            stopAudio();
+        }
+    });
+
+    // --- Slider Navigation ---
+    const SCROLL_AMOUNT = 290;
+
+    sliderLeft.addEventListener('click', () => {
+        sliderContainer.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' });
+    });
+
+    sliderRight.addEventListener('click', () => {
+        sliderContainer.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' });
+    });
+
+    // --- Helpers ---
+
+    function resetResults() {
+        stopAudio();
+        patientSection.classList.remove('visible');
+        findingsSection.classList.remove('visible');
+        summarySection.classList.remove('visible');
+        summaryLoading.classList.remove('visible');
+        sliderContainer.innerHTML = '';
+        summaryList.innerHTML = '';
+        summaryAllLangs = null;
+        currentLang = 'English';
+    }
+
+    function resetBtn() {
+        uploadBtn.classList.remove('loading');
+        if (!analysisComplete) {
+            btnText.textContent = 'Analyze Report';
+        }
+    }
+
+    function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.classList.add('visible');
+    }
+
+    function hideError() {
+        errorMsg.classList.remove('visible');
+    }
+
+    function escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+})();
+</script>
+
+</body>
+</html>

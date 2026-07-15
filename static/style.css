@@ -1,0 +1,902 @@
+/* =============================================
+   pathoGEN — Premium Medical Report Analyzer
+   Color Palette: Coral, Amber, Gold, Mint (NO blue)
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ---------- CSS Custom Properties ---------- */
+:root {
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-card: #242440;
+  --bg-glass: rgba(36, 36, 64, 0.6);
+
+  --coral: #FF6B6B;
+  --coral-glow: rgba(255, 107, 107, 0.3);
+  --amber: #FFB347;
+  --amber-glow: rgba(255, 179, 71, 0.3);
+  --gold: #FFD93D;
+  --gold-glow: rgba(255, 217, 61, 0.25);
+  --mint: #6BCB77;
+  --mint-glow: rgba(107, 203, 119, 0.3);
+  --rose: #FF8E9E;
+  --peach: #FFAB91;
+  --lavender: #D4A5FF;
+
+  --text-primary: #F0F0F5;
+  --text-secondary: #A0A0BE;
+  --text-muted: #6C6C8A;
+
+  --gradient-main: linear-gradient(135deg, var(--coral), var(--amber), var(--gold));
+  --gradient-card: linear-gradient(145deg, #242440, #1e1e36);
+  --gradient-warm: linear-gradient(135deg, var(--coral), var(--peach));
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  --shadow-glow-coral: 0 0 30px var(--coral-glow);
+  --shadow-glow-amber: 0 0 30px var(--amber-glow);
+  --shadow-glow-mint: 0 0 30px var(--mint-glow);
+
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-med: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Subtle background pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 10%, var(--coral-glow), transparent),
+    radial-gradient(ellipse 500px 350px at 80% 80%, var(--amber-glow), transparent),
+    radial-gradient(ellipse 400px 300px at 50% 50%, rgba(107, 203, 119, 0.08), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Top Navbar ---------- */
+.top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 1.5rem;
+  background: rgba(15, 15, 26, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.navbar-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 6px;
+  -webkit-text-fill-color: initial;
+}
+
+.navbar-brand:hover {
+  opacity: 0.8;
+}
+
+/* ---------- Layout ---------- */
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.app-logo {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+
+.app-tagline {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- Upload Section ---------- */
+.upload-section {
+  margin-bottom: 3rem;
+}
+
+.upload-zone {
+  position: relative;
+  border: 2px dashed var(--text-muted);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-med);
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--coral);
+  background: rgba(255, 107, 107, 0.05);
+  box-shadow: var(--shadow-glow-coral);
+}
+
+.upload-zone.has-file {
+  border-color: var(--mint);
+  background: rgba(107, 203, 119, 0.05);
+  box-shadow: var(--shadow-glow-mint);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+  opacity: 0.8;
+}
+
+.upload-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.upload-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.file-name-display {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--mint);
+  font-weight: 600;
+  display: none;
+}
+
+.file-name-display.visible {
+  display: block;
+}
+
+.upload-input {
+  display: none;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.85rem 2.5rem;
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--gradient-main);
+  color: #1a1a2e;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-med);
+  box-shadow: var(--shadow-md);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.upload-btn.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.upload-btn.active:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-coral);
+}
+
+.upload-btn.active:active {
+  transform: translateY(0);
+}
+
+.upload-btn.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* ---------- Loading / Spinner ---------- */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(26, 26, 46, 0.3);
+  border-top-color: #1a1a2e;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-overlay {
+  display: none;
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.loading-overlay.visible {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.loading-text {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-top: 1.25rem;
+  font-weight: 500;
+}
+
+.loading-spinner-lg {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--bg-card);
+  border-top-color: var(--coral);
+  border-right-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin: 0 auto;
+}
+
+/* ---------- Error ---------- */
+.error-message {
+  display: none;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.5rem;
+  color: var(--coral);
+  font-weight: 500;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.error-message.visible {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ---------- Patient Info Banner ---------- */
+.patient-section {
+  display: none;
+  margin-bottom: 2.5rem;
+}
+
+.patient-section.visible {
+  display: block;
+  animation: slideUp 0.5s ease;
+}
+
+.patient-banner {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-md);
+  flex-wrap: wrap;
+}
+
+.patient-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.patient-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.patient-icon.name-icon {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--coral);
+}
+
+.patient-icon.age-icon {
+  background: rgba(255, 179, 71, 0.15);
+  color: var(--amber);
+}
+
+.patient-icon.sex-icon {
+  background: rgba(107, 203, 119, 0.15);
+  color: var(--mint);
+}
+
+.patient-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+}
+
+.patient-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ---------- Findings Slider Section ---------- */
+.findings-section {
+  display: none;
+  margin-bottom: 2.5rem;
+}
+
+.findings-section.visible {
+  display: block;
+  animation: slideUp 0.6s ease;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title .accent {
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.slider-wrapper {
+  position: relative;
+  padding: 0 3rem;
+}
+
+.slider-container {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.75rem 0.25rem 1.25rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.slider-container::-webkit-scrollbar {
+  display: none;
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  z-index: 2;
+  box-shadow: var(--shadow-sm);
+}
+
+.slider-arrow:hover {
+  background: var(--coral);
+  color: var(--bg-primary);
+  border-color: var(--coral);
+  box-shadow: var(--shadow-glow-coral);
+}
+
+.slider-arrow.left {
+  left: -0.25rem;
+}
+
+.slider-arrow.right {
+  right: -0.25rem;
+}
+
+/* ---------- Finding Card ---------- */
+.finding-card {
+  flex: 0 0 260px;
+  background: var(--gradient-card);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all var(--transition-med);
+  position: relative;
+  overflow: hidden;
+}
+
+.finding-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.finding-card[data-flag="High"]::before,
+.finding-card[data-flag="Critical"]::before,
+.finding-card[data-flag="Positive"]::before,
+.finding-card[data-flag="Reactive"]::before,
+.finding-card[data-flag="Abnormal"]::before {
+  background: var(--coral);
+}
+
+.finding-card[data-flag="Low"]::before {
+  background: var(--amber);
+}
+
+.finding-card[data-flag="Normal"]::before,
+.finding-card[data-flag="Negative"]::before,
+.finding-card[data-flag="Non-reactive"]::before {
+  background: var(--mint);
+}
+
+.finding-card[data-flag="Trace"]::before {
+  background: var(--lavender);
+}
+
+.finding-card[data-flag="null"]::before,
+.finding-card:not([data-flag])::before {
+  background: var(--text-muted);
+}
+
+.finding-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-test-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.card-unit {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.card-ref {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.card-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.flag-high, .flag-critical, .flag-positive, .flag-reactive, .flag-abnormal {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--coral);
+}
+
+.flag-low {
+  background: rgba(255, 179, 71, 0.15);
+  color: var(--amber);
+}
+
+.flag-normal, .flag-negative, .flag-non-reactive {
+  background: rgba(107, 203, 119, 0.15);
+  color: var(--mint);
+}
+
+.flag-trace {
+  background: rgba(212, 165, 255, 0.15);
+  color: var(--lavender);
+}
+
+/* ---------- Summary Section ---------- */
+.summary-section {
+  display: none;
+  margin-bottom: 2rem;
+}
+
+.summary-section.visible {
+  display: block;
+  animation: slideUp 0.6s ease;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.summary-header .section-title {
+  margin-bottom: 0;
+}
+
+.summary-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lang-buttons {
+  display: flex;
+  gap: 0.35rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lang-btn {
+  padding: 0.35rem 0.9rem;
+  border: none;
+  border-radius: var(--radius-xl);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.lang-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lang-btn.active {
+  background: var(--gradient-main);
+  color: var(--bg-primary);
+}
+
+.speak-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.speak-btn:hover {
+  background: var(--coral);
+  color: var(--bg-primary);
+  border-color: var(--coral);
+  box-shadow: var(--shadow-glow-coral);
+}
+
+.speak-btn.speaking {
+  background: var(--coral);
+  color: var(--bg-primary);
+  border-color: var(--coral);
+  animation: pulse 1.2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--coral-glow); }
+  50% { box-shadow: 0 0 16px 4px var(--coral-glow); }
+}
+
+.speak-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.summary-loading {
+  display: none;
+  padding: 1.5rem 0;
+}
+
+.summary-loading.visible {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.summary-loading .mini-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--bg-card);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.summary-loading-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summary-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-left: 3px solid var(--coral);
+  opacity: 0;
+  transform: translateX(-12px);
+  animation: slideFadeIn 0.4s ease forwards;
+}
+
+.summary-line:nth-child(odd) {
+  border-left-color: var(--amber);
+}
+
+.summary-line:nth-child(3n) {
+  border-left-color: var(--mint);
+}
+
+.summary-bullet {
+  font-size: 0.7rem;
+  color: var(--coral);
+  margin-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.summary-line:nth-child(odd) .summary-bullet {
+  color: var(--amber);
+}
+
+.summary-line:nth-child(3n) .summary-bullet {
+  color: var(--mint);
+}
+
+.summary-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideFadeIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  .app-logo {
+    font-size: 2.25rem;
+  }
+
+  .patient-banner {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .slider-wrapper {
+    padding: 0;
+  }
+
+  .slider-arrow {
+    display: none;
+  }
+
+  .finding-card {
+    flex: 0 0 220px;
+  }
+
+  .upload-zone {
+    padding: 2rem 1.25rem;
+  }
+
+  .summary-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-logo {
+    font-size: 1.75rem;
+  }
+
+  .finding-card {
+    flex: 0 0 200px;
+    padding: 1.2rem;
+  }
+
+  .card-value {
+    font-size: 1.6rem;
+  }
+}
+
+/* ---------- Bottom Disclaimer Bar ---------- */
+.bottom-disclaimer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(15, 15, 26, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 16px;
+  text-align: center;
+}
+
+.bottom-disclaimer-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+/* Make sure container content isn't cut off by the fixed footer */
+.app-container {
+  padding-bottom: 6.5rem !important;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding-bottom: 5.5rem !important;
+  }
+  .bottom-disclaimer-bar {
+    padding: 8px 12px;
+  }
+  .bottom-disclaimer-text {
+    font-size: 0.65rem;
+  }
+}
+

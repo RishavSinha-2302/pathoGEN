@@ -1,0 +1,19 @@
+name: pathogen
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python>=3.12
+  - pip
+  - fastapi
+  - uvicorn
+  - python-multipart
+  - jinja2
+  - openai
+  - pypdf
+  - python-dotenv
+  - pydantic
+  - pip:
+    - edge-tts
