@@ -126,6 +126,9 @@ async def analyze(file: UploadFile = File(...)):
     # Read and encode
     pdf_bytes = await file.read()
 
+    if len(pdf_bytes) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="PDF exceeds 10 MB.")
+
     if not pdf_bytes.startswith(b"%PDF-"):
         raise HTTPException(status_code=400, detail="Invalid PDF file.")
 
