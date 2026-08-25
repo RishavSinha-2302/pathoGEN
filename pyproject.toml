@@ -1,0 +1,22 @@
+[project]
+name = "pathoGEN"
+version = "1.0.0"
+description = "AI-powered medical report analyzer"
+readme = "README.md"
+requires-python = ">=3.13"
+
+authors = [
+    { name = "Rishav Sinha" }
+]
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "openai",
+    "jinja2",
+    "python-dotenv",
+    "edge-tts",
+    "python-multipart",
+    "pypdf",
+    "pydantic"
+]
