@@ -28,8 +28,8 @@ GEMINI_model_name = "gemini-3.1-flash-lite"
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 gemini = OpenAI(base_url=GEMINI_BASE_URL, api_key=GEMINI_key)
 
-DEEPSEEK_model_name = "deepseek-v4-pro"
-DEEPSEEK_translation_model_name = "deepseek-v4-flash"
+DEEPSEEK_model_name = "deepseek-flash"
+DEEPSEEK_translation_model_name = "deepseek-flash"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 deepseek = OpenAI(base_url=DEEPSEEK_BASE_URL, api_key=DEEPSEEK_key)
 
